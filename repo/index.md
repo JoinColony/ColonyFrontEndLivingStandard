@@ -43,6 +43,20 @@ Imports belong at the top of the file, and in the following order:
 3. Imports from this folder or parent folder
 4. The style import
 
+You should separate the groups by a single empty line.
+
+E.g.
+
+```js
+import React from "react";
+
+import { Colony } from "~types";
+
+import FormHeading from "./FormHeading";
+
+import styles from "./Form.css";
+```
+
 Note that we use webpack to transform paths, so if a path is registered in the webpack config, you can access via the ~ prefix.
 
 ### DisplayName and Component naming
