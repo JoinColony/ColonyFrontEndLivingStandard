@@ -14,6 +14,15 @@ If you do **have** to submit a large pr (you probably don't), leave a note at th
 
 Keep commits on-topic. Ideally, a commit does one, specific thing, and that thing is described accurately by the commit message.
 
+For example:
+
+Bad: `Refactor: Cleanup`
+Good: `Refactor: Cleanup imports in ColonyTokenSelector`
+
+The latter is specific, and atomic: it does one thing, and clearly explains what and where.
+
+See also our (Git workflows)[https://www.notion.so/colony/Github-Git-Workflows-1acdaf1041ee421bb5fc6ecace31096f].
+
 ## Synchronous communication
 
 While we generally handle the code review process asynchronously on Github, sometimes it's just better to catch up in real time. Don't be afraid to do so, but bear in mind that they may be in the middle of something and unable to respond straight away.
