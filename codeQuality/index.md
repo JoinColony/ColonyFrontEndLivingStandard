@@ -105,6 +105,16 @@ When destructuring an object that may be undefined, employ the following syntax:
 const { nativeToken } = colony || {};
 ```
 
+### Event handler naming
+
+To make it easier to distinguish between "internal" and "external" event handlers, use the `on` prefix for naming props and `handle` for naming functions, e.g.:
+
+```jsx
+const handleClick = () => {};
+
+<Button onClick={handleClick} />
+```
+
 ## Javascript best practices
 
 ### Explicitly scoping `if` statements
