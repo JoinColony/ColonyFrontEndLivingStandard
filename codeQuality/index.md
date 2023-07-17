@@ -107,7 +107,7 @@ const { nativeToken } = colony || {};
 
 ### Event handler naming
 
-To make it easier to distinguish between "internal" and "external" event handlers, use the `on` prefix for naming props and `handle` for naming functions, e.g.:
+To make it easier to distinguish between event handlers defined within the component and ones passed down as props, the former should be prefixed with `handle`, and the latter with `on`, e.g.:
 
 ```jsx
 const handleClick = () => {};
