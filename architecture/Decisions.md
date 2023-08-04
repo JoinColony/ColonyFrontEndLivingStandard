@@ -2,7 +2,7 @@
 
 Decisions is a feature that allows users to use the Governance Extension for proposals that don't interact with the network contracts. 
 
-For example, if I wanted to use the Motions process to decide on which restaurant my team should go to for this Friday's team social, I create a decision. You can think of it as an "arbitrary" motion, or a motion for anything, not just the standard suite of on-chain interactions. 
+For example, if I wanted to use the Motions process to decide on which restaurant my team should go to for this Friday's team social, I could create a decision. You can think of it as an "arbitrary" motion, or a motion for anything, not just the standard suite of on-chain interactions. 
 
 ## How Decisions Work
 
@@ -41,7 +41,7 @@ We then store the Decision details in the database, under the `ColonyDecision` m
 
 In the block ingestor, in the same place we handle all the other motion types, we listen for the decision action code (`0x12345678`), and fire our decision handler. Normally, a motion encodes an action to be performed on-chain; in this case, it does not, and so we use a fixed, custom code to communicate the fact we're dealing with a decision.
 
-Inside the Decision handler, all we do is add the decision id to the `ColonyAction` we're creating in the database. DynamoDB will automatically link the `ColonyAction` with its corresponding `ColonyDecision`. We also set the property `isDecision` on the `ColonyMotion` model to true. So in this case, the `ColonyAction` will have both `motionData` and `decisionData` fields. Like normal, `motionData` keeps track of the motion as it progresses through its lifecycle, and `decisionData` here points to the `ColonyDecision` created in the saga.
+Inside the Decision handler, all we do is add the decision id to the `ColonyAction` we're creating in the database. DynamoDB will automatically link the `ColonyAction` with its corresponding `ColonyDecision`. We also set the property `isDecision` on the `ColonyMotion` model to `true`. So in this case, the `ColonyAction` will have both `motionData` and `decisionData` fields. Like normal, `motionData` keeps track of the motion as it progresses through its lifecycle, and `decisionData` here points to the `ColonyDecision` created in the saga.
 
 ### UI
 
