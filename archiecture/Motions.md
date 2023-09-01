@@ -1,28 +1,30 @@
 # Motions
 
-Motions allow users to collectively approve or reject an action in a Colony. Whereas a normal action is unilateral--i.e. it can be completed from start to finish synchronously by a single user--motions provide others an opportunity to review, and if desired, object to, the proposed action.
+Motions in a Colony let users collectively decide whether to approve or reject a specific action. Unlike a normal action, which a single user can execute from beginning to end without interruptions, motions give others the chance to review the proposed action and, if necessary, raise objections.
 
 ## How Motions Work
 
 ### The Governance Extension
 
-Underpinning the Motions feature is the `VotingReputation` contract. Motions functionality can be enabled in a Colony by installing the Voting Reputation (Governance) extension. The extension takes a number of initialisation parameters, which determine things like how long the motion phases lasts for, and what the staking and voting thresholds are. More on that later.
+Underpinning the Motions feature is the (VotingReputation)[https://github.com/JoinColony/colonyNetwork/blob/5762211fe43b699fd9ed536a07deda4e36170787/contracts/extensions/votingReputation/VotingReputation.sol] contract. Motions functionality can be enabled in a Colony by installing the Voting Reputation (Governance) extension. The extension takes a number of initialisation parameters, which determine things like how long the motion phases lasts for, and what the staking and voting thresholds are. 
 
-Once the Governance extension has been installed, so long as there is some reputation in the Colony, a user can create a motion in the Colony. They do not need to be joined to the Colony in order to be able to create a motion in it. 
+Once the Governance extension has been installed, so long as there is some reputation in the Colony, a user can create a motion in the Colony. They do not need to be watching the Colony in order to be able to create a motion in it. 
 
 ### The Motion Lifecycle
 
-A motion goes through a number of phases from creation to completion. The Staking, Voting, and Reveal phases each have a duration, which is specified when installing the Governance extension. If the phase has not already transitioned to a subsequent phase by the end of the timer, it will do so automatically.
+A motion goes through a number of phases from creation to completion. The Staking, Voting, and Reveal phases each have a duration, which is specified when installing the Governance extension. If the phase has not already transitioned to a subsequent phase by the end of the timer, this will happen automatically.
 
 Let's take a look at these phases in a little more detail:
 
 1. Creation. First, a motion gets created. Once the Governance extension is installed, this becomes the default method for triggering an action, and can only be overridden if the user has the correct permissions. 
 
-2. Staking. Staking means to put up some tokens in support of the motion, which will be returned to you in full if the motion passes, and possibly with a penalty applied if it doesn't.
+2. Staking. Staking means to commit some tokens in support of the motion, which will be returned to you in full if the motion passes, and possibly with a penalty applied if it doesn't.
 
 In order to pass, a motion needs to be staked by 100% of the **required stake**.The amount that represents "100%" here is determined when initialising the Governance Extension. It is calculated as a percentage of the domain's reputation, in token terms. 
 
-So for example, if the motion is being made in the root domain, and the root domain has `1_000_000` reputation, a required stake of 1% would require that a motion need be staked by `10_000` of the Colony's native token in order to pass (in WEI). 1 token = 1 * 10^18 WEI, which means `10_000` WEI is actually 1 * 10^-14 token.
+So for example, if the motion is being made in the root domain, and the root domain has `1_000_000` reputation, a required stake of 1% would require that a motion need be staked by `10_000` of the Colony's native token in order to pass (in WEI). 
+
+(1 token = 1 * 10^18 WEI, which means `10_000` WEI is actually 1 * 10^-14 token.)
 
 Anybody can stake a motion, not just its creator. When staking a motion, there are a few constraints applied to each user:
 
@@ -63,23 +65,23 @@ Now that we have an understanding of the various phases a motion can be in, we c
 #### Motion Details page
 We reuse the Action details page layout for motions. 
 
-When viewing the motion details page, a user will be able to see which phase a motion is in at any given time. They will be able to interact with the motion via the `MotionPhaseWidget`, and they will see the messages in the message feed, which is essentially of a log of the motion's lifecycle history. 
+When viewing the motion details page, a user will be able to see which phase a motion is in at any given time. They will be able to interact with the motion via the (MotionPhaseWidget)[https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/src/components/common/ColonyActions/ActionDetailsPage/DefaultMotion/MotionPhaseWidget/MotionPhaseWidget.tsx], and they will see the messages in the message feed, which is essentially a log of the motion's lifecycle history. 
 
 #### Actions list
 
 Motions show up in the actions list, just like ordinary actions, with one caveat. Motions need to be staked a minimum of 10% of the minimum stake in either direction.
 
-The key thing to be aware of here is that there are **two** sources of data mutations on the `ColonyMotion` object. The `ColonyMotion` model is what we use to keep track of all the information relevant to a motion (which messages it shows, who's staked, who's voted etc.). This can be mutated via the block ingestor, or via our `fetchMotionState` lambda. 
+The key thing to be aware of here is that there are **two** sources of data mutations on the `ColonyMotion` object. The (ColonyMotion model)[https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/amplify/backend/api/colonycdapp/schema.graphql#L1867] is what we use to keep track of all the information relevant to a motion (which messages it shows, who's staked, who's voted etc.). This can be mutated via the block ingestor, or via our (fetchMotionState)[https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/amplify/backend/function/fetchMotionState/src/index.js] lambda. 
 
 ### `fetchMotionState` lambda
 
 This lambda has a few responsibilities. 
 
-1. It will return you the correct phase of the motion. We don't store this data on the `ColonyMotion`, because it can only be determined by querying the `VotingReputation` contract. This is because motion state changes are not purely event-driven. A motion can also change state if the phase duration elapses, and in this case, an event will not be emitted by the contract. Thus, to be sure of which phase our motion is in, we need to query the contract directly, and we do so in this lambda.
+1. To return the correct phase of the motion. We don't store this data on the `ColonyMotion`, because it can only be determined by querying the `VotingReputation` contract. This is because motion state changes are not purely event-driven. A motion can also change state if the phase duration elapses, and in this case, an event will not be emitted by the contract. Thus, to be sure of which phase our motion is in, we need to query the contract directly, and we do so in this lambda.
 
-2. As a result of knowing which phase the motion is in, we need to update the message feed to include the corresponding message. This cannot be done in the block ingestor, for the same reason as above: not all motion state changes are triggered by user activity.  
+2. Use this result to update the message feed to include the corresponding message. This cannot be done in the block ingestor, for the same reason as above: not all motion state changes are triggered by user activity.  
 
-3. Depending on which phase our motion is in, we may have to perform additional calculations such as calculating staker rewards. For instance, if a motion is staked, but doesn't go to a vote, we need to be able to return the stakers their stake once it finishes. In this case, it will finish when the staking duration elapses, and so again, this can't be calculated in the block-ingestor. 
+3. Depending on which phase our motion is in, perform additional calculations such as calculating staker rewards. For instance, if a motion is staked, but doesn't go to a vote, we need to be able to return the stakers their stake once it finishes. In this case, it will finish when the staking duration elapses, and so again, this can't be calculated in the block-ingestor. 
 
 In summary, this lambda fetches the latest motion state from the chain, and if necessary, performs mutations to the corresponding `ColonyMotion` database entry to ensure it correctly reflects the current state.
 
@@ -87,7 +89,7 @@ Note: "state" here is being used ambiguously. On the one hand, it refers to the 
 
 ### Block ingestor
 
-The block ingestor will also mutate the `ColonyMotion` object for a given motion. As indicated above, these mutations are event-driven. Whenever a user interacts with a motion, we can pick up the corresponding event in the block-ingestor and handle it there. 
+The block ingestor will also mutate the `ColonyMotion` object for a given motion. As indicated above, these mutations are event-driven. Whenever a user interacts with a motion, we can listen to the corresponding event in the block-ingestor and handle it there. 
 
 Specifically, these include: 
 
@@ -106,7 +108,7 @@ We handle most motion events uniformly, with the exception of `MotionCreated`. W
 
 We have a `ColonyMotion` model for all data directly relevant to a motion. 
 
-This is accessible from the parent `ColonyAction` model. Since a motion ultimately performs an on-chain action in the event it's successful, we consider it subordinate to the `ColonyAction`. We also do this because motions and actions are accessible via the same route; therefore, this pattern lets us know what to query from the database (a `ColonyAction`), and then be able to render an action view or a motion view depending on whether the `ColonyAction` contains motion data. 
+This is accessible from the parent (ColonyAction model)[https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/amplify/backend/api/colonycdapp/schema.graphql#L2170]. Since a motion ultimately performs an on-chain action in the event it's successful, we consider it subordinate to the `ColonyAction`. We also do this because motions and actions are accessible via the same route; therefore, this pattern lets us know what to query from the database (a `ColonyAction`), and then be able to render an action view or a motion view depending on whether the `ColonyAction` contains motion data. 
 
 ## Summary
 
