@@ -108,7 +108,7 @@ We handle most motion events uniformly, with the exception of `MotionCreated`. W
 
 We have a `ColonyMotion` model for all data directly relevant to a motion.
 
-This is accessible from the parent [ColonyAction model](https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/amplify/backend/api/colonycdapp/schema.graphql#L2170)git. Since a motion ultimately performs an on-chain action in the event it's successful, we consider it subordinate to the `ColonyAction`. We also do this because motions and actions are accessible via the same route; therefore, this pattern lets us know what to query from the database (a `ColonyAction`), and then be able to render an action view or a motion view depending on whether the `ColonyAction` contains motion data.
+This is accessible from the parent [ColonyAction model](https://github.com/JoinColony/colonyCDapp/blob/d10adabb5986edb0fd6deb481a7fd007ae640d3e/amplify/backend/api/colonycdapp/schema.graphql#L2170). Since a motion ultimately performs an on-chain action in the event it's successful, we consider it subordinate to the `ColonyAction`. We also do this because motions and actions are accessible via the same route; therefore, this pattern lets us know what to query from the database (a `ColonyAction`), and then be able to render an action view or a motion view depending on whether the `ColonyAction` contains motion data.
 
 ## Summary
 
