@@ -22,19 +22,19 @@ Decision details looks mostly the same as for motions, and indeed, a Decision fo
 
 A draft decision is what's initially created when a user submits the Decision Dialog form. This draft needs to be available at `/:colony/decisions/preview`, so a user can preview their draft.
 
-We also need access to it in the Decisions list, since we display a (DraftDecisionItem)[https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/components/common/ColonyDecisions/DraftDecisionItem/DraftDecisionItem.tsx] there to show the user they have a draft saved locally.
+We also need access to it in the Decisions list, since we display a [DraftDecisionItem](https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/components/common/ColonyDecisions/DraftDecisionItem/DraftDecisionItem.tsx) there to show the user they have a draft saved locally.
 
-Drafts are stored in local storage so they persist between page reloads. We also store decision details in Redux, which enables us to re-render any component using these details whenever they change (such as when editing / deleting a draft). When the app loads, we use (ColonyDecisionContext)[https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/context/ColonyDecisionContext.tsx] to take the decision from local storage and populate it in Redux. We then read the decision directly from redux, which gives us access to the decision data globally, which is handy for accessing it from different screens and also from Dialogs.
+Drafts are stored in local storage so they persist between page reloads. We also store decision details in Redux, which enables us to re-render any component using these details whenever they change (such as when editing / deleting a draft). When the app loads, we use [ColonyDecisionContext](https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/context/ColonyDecisionContext.tsx) to take the decision from local storage and populate it in Redux. We then read the decision directly from redux, which gives us access to the decision data globally, which is handy for accessing it from different screens and also from Dialogs.
 
 ### Decision saga
 
 Once a user is happy with their Decision, they can publish it.
 
-This fires the `MOTION_CREATE_DECISION` redux action, which triggers the (createDecisionMotion)[https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/redux/sagas/motions/createDecisionMotion.ts] saga.
+This fires the `MOTION_CREATE_DECISION` redux action, which triggers the [createDecisionMotion](https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/src/redux/sagas/motions/createDecisionMotion.ts) saga.
 
 In this saga, we trigger the `createMotion` action on the `VotingReputation` contract.
 
-We then store the Decision details in the database, under the (ColonyDecision)[https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/amplify/backend/api/colonycdapp/schema.graphql#L2368] model. We store the Decision id in the format: `<colonyAddress>_decision_<txHash>`, so it can be easily retreived from the block ingestor.
+We then store the Decision details in the database, under the [ColonyDecision](https://github.com/JoinColony/colonyCDapp/blob/07afd43ff084048d5f11976d6298048401509fcb/amplify/backend/api/colonycdapp/schema.graphql#L2368) model. We store the Decision id in the format: `<colonyAddress>_decision_<txHash>`, so it can be easily retreived from the block ingestor.
 
 A user can also delete their decision draft from the Decision Preview, which dispatches the `DECISION_DRAFT_REMOVED` action and removes the data from local storage.
 
@@ -42,7 +42,7 @@ A user can also delete their decision draft from the Decision Preview, which dis
 
 In the block ingestor, in the same place we handle all the other motion types, we listen for the decision action code (`0x12345678`), and fire our decision handler. Normally, a motion encodes an action to be performed on-chain; in this case, it does not, and so we use a fixed, custom code to communicate the fact we're dealing with a decision.
 
-Inside the (Decision handler)[https://github.com/JoinColony/block-ingestor/blob/0a4a9db0f0241be6e8d0855e7954d17fe614dc06/src/handlers/motions/motionCreated/handlers/simpleDecision.ts], all we do is add the decision id to the `ColonyAction` we're creating in the database. DynamoDB will automatically link the `ColonyAction` with its corresponding `ColonyDecision`. We also set the property `isDecision` on the `ColonyMotion` model to `true`. So in this case, the `ColonyAction` will have both `motionData` and `decisionData` fields. Like normal, `motionData` keeps track of the motion as it progresses through its lifecycle, and `decisionData` here points to the `ColonyDecision` created in the saga.
+Inside the [Decision handler](https://github.com/JoinColony/block-ingestor/blob/0a4a9db0f0241be6e8d0855e7954d17fe614dc06/src/handlers/motions/motionCreated/handlers/simpleDecision.ts), all we do is add the decision id to the `ColonyAction` we're creating in the database. DynamoDB will automatically link the `ColonyAction` with its corresponding `ColonyDecision`. We also set the property `isDecision` on the `ColonyMotion` model to `true`. So in this case, the `ColonyAction` will have both `motionData` and `decisionData` fields. Like normal, `motionData` keeps track of the motion as it progresses through its lifecycle, and `decisionData` here points to the `ColonyDecision` created in the saga.
 
 ### UI
 
