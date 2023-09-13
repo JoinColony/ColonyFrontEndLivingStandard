@@ -22,7 +22,7 @@ In the saga, we do three things.
 
 First, we upload the annotation to IPFS. This means it can be accessed even if the user isn't accessing Colony via the CDapp.
 
-Then, we upload it to the database using the Annotation model. The model has four fields:
+Then, we upload it to the database using the [Annotation model](https://github.com/JoinColony/colonyCDapp/blob/7c0177dddb4d2809de096c1df0feb140ae8849f8/amplify/backend/api/colonycdapp/schema.graphql#L2581). The model has four fields:
 
 `id`: the transaction hash of the transaction it annotates, 
 `message`: the annotation message, 
