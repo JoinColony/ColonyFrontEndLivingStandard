@@ -39,7 +39,7 @@ Finally, we call the `annotateTransaction` method on the Colony contract. This e
 
 In the block ingestor, we're only concerned with the `txHash`. We use the `txHash` to query the annotation in the database (since this is the annotation's id). From there, we look at the `actionId`. 
 
-If the `txHash` and the `actionId` are identical, we know we're not objecting to a motion, and so we write the `txHash` to the `annotationId` field on the corresponding `ColonyAction` entry. Behind the scenes, DynamoDB will associate the Annotation with the `ColonyAction`, so we can access it via the UI.
+If the `txHash` and the `actionId` are identical, we know we're not objecting to a motion, and so we write the `txHash` to the `annotationId` field on the corresponding [`ColonyAction`](https://github.com/JoinColony/colonyCDapp/blob/7c0177dddb4d2809de096c1df0feb140ae8849f8/amplify/backend/api/colonycdapp/schema.graphql#L2147) entry. Behind the scenes, DynamoDB will associate the Annotation with the `ColonyAction`, so we can access it via the UI.
 
 If they're different, we know the annotation is for an objection to a motion. In this case, we retreive the motion, and store the `annotationId` on the corresponding `ColonyMotion`. Since objection annotations can only be performed on motions, it makes sense that an objection annotation should be associated with the `ColonyMotion` model. Again, DynamoDB allows us to access the Annotation from the `ColonyMotion` we associate it with, for consumption in the UI.
 
