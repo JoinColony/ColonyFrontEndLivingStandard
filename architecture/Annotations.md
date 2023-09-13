@@ -45,5 +45,5 @@ If they're different, we know the annotation is for an objection to a motion. In
 
 ### UI
 
-In the UI, we have an `ActionAnnotation` component, which renders the annotation for the user when they visit the Action / Motion details page. It has a different background colour depending on whether the annotation is of the original action, or an objection to a motion. 
+In the UI, we have an [`ActionAnnotation`](https://github.com/JoinColony/colonyCDapp/blob/7c0177dddb4d2809de096c1df0feb140ae8849f8/src/components/common/ColonyActions/ActionDetailsPage/DefaultAction/ActionAnnotation.tsx) component, which renders the annotation for the user when they visit the Action / Motion details page. It has a different background colour depending on whether the annotation is of the original action, or an objection to a motion. 
 
