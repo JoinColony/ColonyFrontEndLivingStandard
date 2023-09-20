@@ -59,6 +59,14 @@ For Binance: https://alm-gnosis-bsc.colony.io/
 
 These services are hosted and maintained by us. It was previously developed and maintained by [TokenBridge](https://docs.tokenbridge.net/) but they seem to ahve abandoned it, and with this app being essential for the users to execute their transactions, we've decided it to maintain it ourselves.
 
+## Testing Safe Control locally
+
+Testing this feature on the dev env is possible due to the docker container called `safe`, which will be used to deploy a foreign chain, home and foreign bridges, and a safe with tokens and 1 NFT. The addresses to each of the relevant contracts will be printed in the console once the container is up and running.
+
+Once they are printed out, you must include them in the `.env` file as the `.env.example` indicates.
+
+With that, you can start testing the feature as you would in QA or production with the only difference being that you don't need to execute the transactions in the live monitor app since the transactions will be executed automatically by the mock contracts, therefore, locally the transactions will always be shown as `Completed` from the get-go.
+
 ### Final considerations
 
 - The action/motion should appear in the list with a custom title provided by the user in the final step of the "Control Safe" dialog that has a `Safe transaction: ` prefix and again, a tag like in the action/motion page showing whether the transactions were executed or not in the other network.
