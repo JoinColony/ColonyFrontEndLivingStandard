@@ -194,6 +194,76 @@ Signs you have an unruly form:
 
 2. Small changes to one part of the form break other parts unexpectedly. Could the form be redesigned to make the data flow more explicit and easier to reason about?
 
+## i18n
+
+We use the [react-intl](https://formatjs.io/docs/react-intl/) library for localization.
+
+### Where to put localized strings
+
+We try to keep all strings used on a specific page or a component within that component's scope.
+
+Define an object called `MSG` with the `defineMessages` helper from `react-intl` and prefix the messages with the component's `displayName` if applicable, otherwise prefix it with something that semantically makes sense.
+
+Then format those values with the `formatMessage` function from `react-intl`.
+
+React component example:
+
+```jsx
+import { FC } from 'react';
+import { defineMessages, formatMessage } from 'react-intl';
+
+const displayName = 'MyComponent.InputWidget';
+
+const MSG = defineMessages({
+  title: {
+      id: `${displayName}.title`,
+      defaultMessage: 'Lorem ipsum',
+    },
+    inputLabel: {
+        id: `${displayName}.inputLabel`,
+        defaultMessage: 'Please input something',
+    }.
+});
+
+const InputWidget: FC = () => {
+  return (
+    <div>
+        <h1>{formatMessage(MSG.title)}</h1>
+        <label>{formatMessage(MSG.inputLabel)}</label>
+        <input />
+    </div>
+  );
+}
+
+InputWidget.displayName = displayName;
+
+export default InputWidget;
+```
+
+A helper file example:
+```jsx
+import { defineMessages, formatMessage } from 'react-intl';
+    
+const MSG = defineMessages({
+    aboutLink: {
+        id: 'FooterLinks.about',
+        defaultMessage: 'About',
+    },
+    tokenLink: {
+        id: 'FooterLinks.token',
+        defaultMessage: 'CLNY',
+    },
+});
+    
+const footerLinks = [{
+    text: formatMessage(MSG.aboutLink),
+    url: 'https://colony.io/about-us',
+}, {
+    text: formatMessage(MSG.tokenLink),
+    url: 'https://colony.io/clny',
+}];
+```
+
 ## Further Reading
 
 - (Google's Typescript style guide)[https://google.github.io/styleguide/tsguide.html]: An excellent explanation of the style decisions adopted in Google's engineering teams. We don't implement everything in here, but it's nevertheless an informative read.
