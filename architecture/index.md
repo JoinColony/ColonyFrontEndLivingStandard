@@ -2,7 +2,8 @@
 
 ## General overview
 
-![image](https://github.com/JoinColony/ColonyFrontEndLivingStandard/assets/64402732/7084329d-8499-4be7-9448-964a1c349d7f)
+![image](https://github.com/JoinColony/ColonyFrontEndLivingStandard/assets/64402732/54e45aef-2ce3-4393-8bbf-b191951192b8)
+
 
 A typical user interaction involves updating state, e.g. by minting some new tokens. In this case, a user is using the Colony UI to manipulate state held in the Colony Network smart contracts. To manage this interaction, we use the asychronous side-effect manager Redux Saga. Sagas asynchronously handle side-effects, such as making calls to on-chain contract methods, and keep the UI updated as to the state of a given chain transaction.
 
