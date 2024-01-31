@@ -11,7 +11,7 @@ Our smart contracts generally emit events after their methods execute successful
 
 At Colony, we're using chain state as the single source of truth, and a database as a faster, caching layer for reads from the client. To keep these in sync, we use the block ingestor to listen for events emitted by the chain, and then update database state accordingly.
 
-All CRUD requests to the database go through our authentication server, which ensures access to our database is secure and all requests are correctly permissioned.
+All CRUD requests to the database go through the graphql api. Requests to that api made by the client go via the auth server, which ensures access to our database is secure and all requests are correctly permissioned.
 
 ## Saga Overview
 
