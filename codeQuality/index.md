@@ -12,7 +12,7 @@ CDapp has a codegen tool set up that automatically generates TS types based on t
 
 ### Amplify schema types
 
-Interfaces and enums for all types defined in the `schema.graphql` (and additional types added during Amplify schema compilation). Note those interfaces will contain ALL possible fields of each object type. Apart from enums, entire object types imported from `~gql` should almost never be used (use fragments instead).
+Interfaces and enums for all types defined in the `schema.graphql` (and additional types added during Amplify schema compilation, see [docs](https://docs.amplify.aws/gen1/javascript/build-a-backend/graphqlapi/data-modeling/) for details). Note those interfaces will contain ALL possible fields of each object type. Apart from enums, scalars and input types, entire object types imported from `~gql` should almost never be used (use fragments instead).
 
 ### Client-side operations and fragments from `graphql/**/*.graphql`
 
@@ -21,10 +21,11 @@ Interfaces for return types and variables, individual Apollo hooks for each oper
 Each fragment will also generate a corresponding interface. **Please make sure to re-export all fragments from `graphql/types.ts` to avoid confusion between fragments and entire object types from schema**
 
 ## GraphQL best practices
-- Use fragments to generate the types you need in the CDapp. Remember to re-export fragments from `graphql/types.ts`.
+- Use fragments to generate the types you need in the CDapp and to reduce duplication between queries/mutations. Remember to re-export fragments from `graphql/types.ts`.
 - Consider the query size. The more fields you add, the longer it will take to fetch - maybe not all fields are needed at the same time and some could be fetched separately? This is especially true for relationship fields (linking to other models) or fields resolved by lambdas.
 - Relationship fields should be nullable unless you're certain the related object will exist. Otherwise, the entire operation will fail.
 - In the schema, the convention is to use the word "ID" whenever it means a unique database ID of a model vs. "native ID" when it refers to an on-chain ID (which might not be unique).
+- When polling for data resulting from a transaction, use `getSafePollingInterval` helper to poll at most as often as the block time on a given chain.
 
 ## Refactoring
 
