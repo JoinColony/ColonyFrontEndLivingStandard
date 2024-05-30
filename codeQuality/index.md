@@ -6,6 +6,26 @@ In the CDapp we have linting rules enabled. When commiting, a number of pre-comm
 
 We also use Prettier to ensure that our code is formatted neatly on the page. Ensure you have the relevant editor extension installed.
 
+## GraphQL codegen
+
+CDapp has a codegen tool set up that automatically generates TS types based on the Amplify schema and client-side queries, mutations and subscriptions. It can be run with `npm run codegen` and produces a `generated.ts` file that contains the following: 
+
+### Amplify schema types
+
+Interfaces and enums for all types defined in the `schema.graphql` (and additional types added during Amplify schema compilation). Note those interfaces will contain ALL possible fields of each object type. Apart from enums, entire object types imported from `~gql` should almost never be used (use fragments instead).
+
+### Client-side operations and fragments from `graphql/**/*.graphql`
+
+Interfaces for return types and variables, individual Apollo hooks for each operation as well as `Document` objects which can be useful when using Apollo client directly or refetching queries. Those return types will contain the exact subset of fields that the operations are fetching. If you expect to use the generated type of a particular operation or field, consider using fragments.
+
+Each fragment will also generate a corresponding interface. **Please make sure to re-export all fragments from `graphql/types.ts` to avoid confusion between fragments and entire object types from schema**
+
+## GraphQL best practices
+- Use fragments to generate the types you need in the CDapp. Remember to re-export fragments from `graphql/types.ts`.
+- Consider the query size. The more fields you add, the longer it will take to fetch - maybe not all fields are needed at the same time and some could be fetched separately? This is especially true for relationship fields (linking to other models) or fields resolved by lambdas.
+- Relationship fields should be nullable unless you're certain the related object will exist. Otherwise, the entire operation will fail.
+- In the schema, the convention is to use the word "ID" whenever it means a unique database ID of a model vs. "native ID" when it refers to an on-chain ID (which might not be unique).
+
 ## Refactoring
 
 Set aside time / issues for refactoring… but not too early (nor too late). Generally when you start to notice copy/pasted code or that files are becoming too long, it's a good sign that you could start refactoring. How long is too long? Anything over 100-150 lines is a good estimate.
