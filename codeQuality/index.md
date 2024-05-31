@@ -187,6 +187,34 @@ const c = +a;
 const d = Number(0).toString();
 ```
 
+### Function parameters
+
+Prefer object parameters if the number of parameters exceeds 3:
+
+```js
+// Yes
+const fruitGuesser = ({ isCitrus, isTropical, isBerry, isSeedless}) => { ... };
+
+// Usage
+fruitGuesser({ isCitrus: false, isTropical: false, isBerry: true, isSeedless: false});
+```
+Feel free to use an object parameter, even if it contains only one field, to enhance code readability:
+
+```js
+// Yes
+const greetUser = ({ userId }) => { ... };
+```
+
+We want to avoid having a function that appears ambiguous when used.
+
+```js
+// No
+const fruitGuesser = (isCitrus, isTropical, isBerry, isSeedless) => {};
+
+// Usage
+fruitGuesser(false, false, true, false);
+```
+
 ## Forms best practices
 
 We use forms all the time to take user input and do something with it (usually pass it on to a saga). All new forms should be created using the dedicated `react-hook-form` components. If you see any legacy code using `formik`, please open an issue and refactor.
